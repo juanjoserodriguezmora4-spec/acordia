@@ -53,6 +53,24 @@ Tecnologías: Java 17 + Spring Boot 3 (backend REST), MySQL, HTML/CSS/JavaScript
 5. Botón verde **Run** (o clic derecho en `AcordiaApplication.java` → *Run File*).
 6. Abre **http://localhost:8080** en el navegador.
 
+### Encender la IA (opcional, recomendado)
+
+Sin esto Acordia funciona igual, con el analizador del navegador. Con la IA reconoce más acordes (7, maj7, m7, sus…)
+y encuentra mejor los pulsos.
+
+1. Instala **Python 3.12** desde https://www.python.org/downloads/ y, en la primera pantalla del instalador,
+   marca **«Add python.exe to PATH»**.
+2. Descarga los pesos de Beat This!: abre https://cloud.cp.jku.at/index.php/s/7ik4RrBKTS273gp, descarga
+   **final0.ckpt** y guárdalo en la carpeta `ia/modelos/` del proyecto (queda `ia/modelos/final0.ckpt`).
+   No viene en el repositorio porque pesa unos 80 MB y es de otros autores.
+3. Doble clic en **`ia/iniciar-ia.bat`**. La primera vez instala PyTorch y lo demás (cerca de 1 GB, varios minutos).
+4. Deja esa ventana abierta. Está lista cuando dice `Acordia IA escuchando en http://127.0.0.1:5000`.
+5. En Acordia abre una canción → **Más → Volver a analizar** → **Analizar con: IA** → **Analizar**.
+   En la ventana de la IA debe salir una línea como `[Acordia IA] … pulsos con Beat This!`.
+
+Cada vez que quieras usar la IA, abre otra vez `iniciar-ia.bat` (las siguientes veces arranca en segundos).
+Si algo falla, mira «Problemas comunes» en `ia/LEEME.md`.
+
 ### Probar sin MySQL (modo demo)
 
 Clic derecho al proyecto → **Run Maven → Ejecutar sin MySQL (modo demo)**.
