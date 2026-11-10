@@ -1,0 +1,34 @@
+# Compilación
+target/
+
+# Datos locales (audios subidos y base de datos del modo demo)
+audios/
+datos/
+
+# El dataset es muy grande para subirlo al repositorio
+*.csv
+
+# IDEs
+nbproject/private/
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Dataset descargado por el botón Importar
+datos-chordonomicon/
+
+# Servicio de IA: entorno de Python y pesos que se descargan aparte
+ia/.venv/
+ia/modelos/*.ckpt
+__pycache__/
+*.pyc
+
+# Pruebas
+node_modules/

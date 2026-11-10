@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Acciones de NetBeans: el botón verde "Run" arranca Spring Boot,
+     y en clic derecho > Run Maven aparece la opción para probar sin MySQL. -->
+<actions>
+    <action>
+        <actionName>run</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>spring-boot:run</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>CUSTOM-demo</actionName>
+        <displayName>Ejecutar sin MySQL (modo demo)</displayName>
+        <goals>
+            <goal>spring-boot:run</goal>
+        </goals>
+        <properties>
+            <spring-boot.run.profiles>demo</spring-boot.run.profiles>
+        </properties>
+    </action>
+</actions>

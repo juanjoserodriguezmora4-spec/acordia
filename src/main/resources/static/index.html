@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="es" data-tema="claro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Color de la barra de estado del celular: igual a la cabecera (se ajusta al cambiar de tema) -->
+  <meta name="theme-color" content="#ffffff" id="color-tema">
+  <title>Acordia · acordes sincronizados</title>
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="css/estilos.css">
+  <script>
+    // Tema guardado (antes de pintar, para que no parpadee)
+    try { const t = localStorage.getItem('acordia.tema'); if (t) document.documentElement.dataset.tema = JSON.parse(t); } catch (e) { /* sin almacenamiento */ }
+    document.getElementById('color-tema').content = document.documentElement.dataset.tema === 'oscuro' ? '#0c0b18' : '#ffffff';
+  </script>
+</head>
+<body>
+
+<!-- Íconos reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-buscar" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+    <symbol id="i-subir" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 15v4h14v-4"/></symbol>
+    <symbol id="i-conteo" viewBox="0 0 24 24"><path d="M12 4a8 8 0 1 1-7.4 5"/><path d="M4.5 4.5v4.5H9"/><text x="12" y="16" text-anchor="middle" font-size="8" font-weight="700" stroke="none" fill="currentColor">3</text></symbol>
+    <symbol id="i-volumen" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+    <symbol id="i-guitarra" viewBox="0 0 24 24"><path d="M14.5 9.5 19 5l1.5 1.5L16 11"/><path d="M13 8.5c-2.5-1-5 0-6 1.6-.6 1-.4 1.9-1.6 2.6-1.6.9-2 3.2-.4 4.8l1.4 1.4c1.6 1.6 3.9 1.2 4.8-.4.7-1.2 1.6-1 2.6-1.6 1.6-1 2.6-3.5 1.6-6"/><circle cx="10" cy="14" r="1.2"/></symbol>
+    <symbol id="i-bucle" viewBox="0 0 24 24"><path d="M9 7.5C5.5 7.5 3.5 9.5 3.5 12s2 4.5 5.5 4.5c4 0 4-9 8-9 3 0 4 2 4 4.5s-1 4.5-4 4.5"/></symbol>
+    <symbol id="i-velocidad" viewBox="0 0 24 24"><path d="M4.5 16a8 8 0 1 1 15 0"/><path d="m12 13 3.5-4"/></symbol>
+    <symbol id="i-capo" viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="5" rx="2"/><path d="M8 9V6.5a2 2 0 0 1 2-2h7"/><path d="M6 14v3M10 14v3M14 14v3M18 14v3"/></symbol>
+    <symbol id="i-tono" viewBox="0 0 24 24"><path d="M7 14 12 9l5 5"/><path d="M7 19l5-5 5 5" opacity=".45"/></symbol>
+    <symbol id="i-mas" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-editar" viewBox="0 0 24 24"><path d="M5 19h3.5L19 8.5 15.5 5 5 15.5z"/><path d="m13.5 7 3.5 3.5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pausa" viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-inicio" viewBox="0 0 24 24"><path d="M6 5v14"/><path d="M18 6v12l-9-6z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-tema" viewBox="0 0 24 24"><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z"/></symbol>
+    <symbol id="i-archivo" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<header class="cabecera">
+  <a href="#/" class="marca" aria-label="Acordia, ir a la biblioteca">
+    <img src="img/logo.svg" alt="" width="32" height="32"><span>Acordia</span>
+  </a>
+  <nav class="nav-cabecera">
+    <a href="#/" data-nav="biblioteca">Biblioteca</a>
+  </nav>
+  <button type="button" class="boton-tema" id="b-tema" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema"><svg class="ic"><use href="#i-tema"/></svg></button>
+  <a href="#/nueva" class="boton boton-cabecera" data-nav="nueva"><svg class="ic"><use href="#i-subir"/></svg><span>Subir canción</span></a>
+</header>
+
+<main>
+  <!-- ===================================================== BIBLIOTECA -->
+  <section id="vista-biblioteca" class="vista" hidden>
+    <div class="hero">
+      <div class="hero-cuerdas" aria-hidden="true"></div>
+      <div class="filtros" id="filtros" role="group" aria-label="Mostrar">
+        <button type="button" class="filtro activa" data-tipo="todas" aria-pressed="true">Todas</button>
+        <button type="button" class="filtro" data-tipo="archivo" aria-pressed="false">De archivo</button>
+        <button type="button" class="filtro" data-tipo="youtube" aria-pressed="false">De YouTube</button>
+        <button type="button" class="filtro" data-tipo="ensenan" aria-pressed="false">Las que enseñan a Acordia</button>
+      </div>
+      <h1 class="hero-titulo">Toca tus canciones con los acordes a tiempo</h1>
+      <p class="hero-sub">Sube un audio o pega un link de YouTube. Acordia encuentra los acordes y te los muestra mientras suena la canción.</p>
+      <form class="buscador-hero" id="form-buscar" role="search">
+        <svg class="ic" aria-hidden="true"><use href="#i-buscar"/></svg>
+        <input id="buscar" type="search" placeholder="Busca por título o artista" autocomplete="off" aria-label="Buscar en tu biblioteca">
+        <button type="submit">Buscar</button>
+      </form>
+      <div class="frecuentes" id="frecuentes"></div>
+    </div>
+    <div class="encabezado-biblioteca">
+      <h2>Tu biblioteca</h2>
+      <p class="sub" id="sub-biblioteca"></p>
+    </div>
+    <div id="estado-servidor" class="estado-servidor"></div>
+    <div id="importacion" class="tarjeta-importacion" hidden>
+      <div class="importacion-texto">
+        <strong>Base de acordes Chordonomicon</strong>
+        <span id="importacion-mensaje">Preparando…</span>
+      </div>
+      <div class="barra-progreso"><span id="importacion-relleno"></span></div>
+      <p class="ayuda" id="importacion-ayuda">Puedes seguir usando Acordia mientras tanto. Si cierras NetBeans se detiene; al volver a darle a «Importar» sigue donde iba (no vuelve a descargar).</p>
+    </div>
+    <div id="lista-canciones" class="tarjetas"></div>
+    <div id="biblioteca-vacia" class="vacio" hidden>
+      <svg viewBox="0 0 120 80" aria-hidden="true" class="vacio-ilustracion">
+        <g stroke="currentColor" stroke-width="2" fill="none" opacity=".5">
+          <line x1="20" y1="10" x2="20" y2="70"/><line x1="40" y1="10" x2="40" y2="70"/><line x1="60" y1="10" x2="60" y2="70"/>
+          <line x1="80" y1="10" x2="80" y2="70"/><line x1="100" y1="10" x2="100" y2="70"/>
+          <line x1="14" y1="12" x2="106" y2="12" stroke-width="4"/><line x1="14" y1="32" x2="106" y2="32"/><line x1="14" y1="52" x2="106" y2="52"/>
+        </g>
+        <circle cx="40" cy="42" r="6" fill="var(--acento)"/><circle cx="80" cy="22" r="6" fill="var(--acento)"/>
+      </svg>
+      <h2 id="vacio-titulo">Todavía no hay canciones</h2>
+      <p id="vacio-texto">Sube un MP3 o pega un link de YouTube y Acordia te muestra los acordes mientras suena.</p>
+      <a href="#/nueva" class="boton boton-primario" id="vacio-boton">Agregar la primera</a>
+    </div>
+  </section>
+
+  <!-- ===================================================== NUEVA CANCIÓN -->
+  <section id="vista-nueva" class="vista vista-estrecha" hidden>
+    <div class="encabezado-vista">
+      <div>
+        <h1>Subir canción</h1>
+        <p class="sub">Tres pasos: el audio, los acordes de referencia (si los hay) y listo.</p>
+      </div>
+    </div>
+
+    <div class="paso">
+      <h2><span class="num">1</span> El audio</h2>
+      <div class="pestanas" role="tablist" id="pestanas-fuente">
+        <button type="button" role="tab" class="activa" data-fuente="MP3" aria-selected="true">Archivo de audio</button>
+        <button type="button" role="tab" data-fuente="YOUTUBE" aria-selected="false">Video de YouTube</button>
+      </div>
+      <div id="panel-mp3">
+        <label class="zona-archivo" id="zona-archivo">
+          <input type="file" id="archivo" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac" hidden>
+          <svg class="ic ic-grande" aria-hidden="true"><use href="#i-archivo"/></svg>
+          <strong id="texto-zona">Arrastra el archivo aquí o haz clic para elegirlo</strong>
+          <span class="ayuda">MP3, M4A, WAV, OGG o FLAC · máximo 40 MB</span>
+        </label>
+      </div>
+      <div id="panel-youtube" hidden>
+        <label class="campo">Link del video
+          <input id="url-youtube" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+        </label>
+        <p class="nota">Acordia analiza el video mientras suena: el navegador te pedirá permiso para compartir
+          <strong>esta pestaña con su audio</strong>, el video se reproduce completo una vez y al final aparecen los acordes.
+          Funciona en Chrome y Edge de computador. Si prefieres, también puedes marcar los cambios a mano.</p>
+      </div>
+      <div class="fila-campos">
+        <label class="campo">Título <input id="titulo" autocomplete="off" placeholder="Nombre de la canción"></label>
+        <label class="campo">Artista <input id="artista" autocomplete="off" placeholder="Opcional"></label>
+      </div>
+    </div>
+
+    <div class="paso">
+      <h2><span class="num">2</span> Acordes de referencia <span class="etiqueta-suave" id="ref-requisito">opcional: mejora la detección</span></h2>
+      <div id="selector-referencia-nueva"></div>
+    </div>
+
+    <div class="paso paso-final">
+      <button type="button" id="crear" class="boton boton-primario grande">Crear y analizar</button>
+      <div id="progreso" class="progreso" hidden>
+        <div class="barra-progreso"><span id="progreso-relleno"></span></div>
+        <p id="progreso-texto">Preparando…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== REPRODUCTOR -->
+  <section id="vista-reproductor" class="vista" hidden>
+    <div class="pagina-cancion">
+      <div class="columna-principal">
+        <article class="tarjeta-cancion">
+          <div class="cabecera-cancion">
+            <div class="cabecera-texto">
+              <h1 id="r-titulo">…</h1>
+              <p id="r-sub" class="sub"></p>
+            </div>
+            <div class="cabecera-acciones">
+              <button type="button" class="boton" id="b-editar" aria-pressed="false"><svg class="ic"><use href="#i-editar"/></svg>Editar acordes</button>
+            </div>
+          </div>
+
+          <div class="reproductor">
+            <button type="button" class="boton-redondo" id="b-reiniciar" title="Volver al inicio" aria-label="Volver al inicio"><svg class="ic"><use href="#i-inicio"/></svg></button>
+            <button type="button" class="boton-play" id="b-play" title="Reproducir / pausar (espacio)" aria-label="Reproducir">
+              <svg class="ic icono-play"><use href="#i-play"/></svg><svg class="ic icono-pausa"><use href="#i-pausa"/></svg>
+            </button>
+            <div class="linea-tiempo">
+              <input type="range" id="barra-tiempo" class="barra-tiempo" min="0" max="1000" value="0" step="1" aria-label="Posición en la canción">
+              <div class="tiempos"><span id="t-actual">0:00</span><span id="t-total">0:00</span></div>
+            </div>
+          </div>
+
+          <div class="herramientas" role="toolbar" aria-label="Herramientas">
+            <button type="button" class="herramienta" id="h-conteo" aria-pressed="false" title="Contar 3, 2, 1 antes de empezar">
+              <svg class="ic"><use href="#i-conteo"/></svg><span>3, 2, 1</span></button>
+            <div class="herramienta-con-menu">
+              <button type="button" class="herramienta" id="h-volumen" aria-haspopup="true" aria-expanded="false" title="Volumen">
+                <svg class="ic"><use href="#i-volumen"/></svg><span>Volumen</span></button>
+              <div class="menu" id="m-volumen" hidden>
+                <label class="campo-rango-vertical">Volumen <input type="range" id="volumen" min="0" max="100" value="100"></label>
+              </div>
+            </div>
+            <div class="herramienta-con-menu">
+              <button type="button" class="herramienta" id="h-instrumento" aria-haspopup="true" aria-expanded="false" title="Instrumento de los diagramas">
+                <svg class="ic"><use href="#i-guitarra"/></svg><span id="h-instrumento-texto">Guitarra</span></button>
+              <div class="menu" id="m-instrumento" hidden role="menu">
+                <button type="button" role="menuitemradio" data-instrumento="guitarra">Guitarra</button>
+                <button type="button" role="menuitemradio" data-instrumento="ukelele">Ukelele</button>
+                <button type="button" role="menuitemradio" data-instrumento="piano">Piano</button>
+              </div>
+            </div>
+            <button type="button" class="herramienta" id="h-bucle" aria-pressed="false" title="Repetir una parte: toca el pulso de inicio y el de fin">
+              <svg class="ic"><use href="#i-bucle"/></svg><span>Bucle</span></button>
+            <div class="herramienta herramienta-pasos" title="Velocidad (sin cambiar el tono)">
+              <div class="pasos"><button type="button" id="h-vel-menos" aria-label="Más lento">◀</button><output id="h-vel">100 %</output><button type="button" id="h-vel-mas" aria-label="Más rápido">▶</button></div>
+              <span><svg class="ic ic-mini"><use href="#i-velocidad"/></svg>Velocidad</span>
+            </div>
+            <div class="herramienta herramienta-pasos" title="Cejilla o capotraste">
+              <div class="pasos"><button type="button" id="h-capo-menos" aria-label="Bajar cejilla">◀</button><output id="h-capo">0</output><button type="button" id="h-capo-mas" aria-label="Subir cejilla">▶</button></div>
+              <span><svg class="ic ic-mini"><use href="#i-capo"/></svg>Cejilla</span>
+            </div>
+            <div class="herramienta herramienta-pasos" title="Transponer: subir o bajar el tono de los acordes">
+              <div class="pasos"><button type="button" id="h-tono-menos" aria-label="Bajar medio tono">▼</button><output id="h-tono">C</output><button type="button" id="h-tono-mas" aria-label="Subir medio tono">▲</button></div>
+              <span><svg class="ic ic-mini"><use href="#i-tono"/></svg>Transponer</span>
+            </div>
+            <div class="herramienta-con-menu">
+              <button type="button" class="herramienta" id="h-mas" aria-haspopup="true" aria-expanded="false" title="Más opciones">
+                <svg class="ic"><use href="#i-mas"/></svg><span>Más</span></button>
+              <div class="menu menu-ancho menu-derecha" id="m-mas" hidden>
+                <div class="menu-grupo">
+                  <span class="menu-titulo">Notación</span>
+                  <div class="segmentado" role="radiogroup">
+                    <button type="button" data-notacion="americana">C D E</button>
+                    <button type="button" data-notacion="latina">Do Re Mi</button>
+                  </div>
+                </div>
+                <div class="menu-grupo">
+                  <span class="menu-titulo">Nivel</span>
+                  <div class="segmentado" role="radiogroup">
+                    <button type="button" data-nivel="completo" title="Los acordes tal como están">Completo</button>
+                    <button type="button" data-nivel="sencillo" title="Sin séptimas, novenas ni bajos: E7 → E, Am7 → Am, D/F♯ → D">Sencillo</button>
+                  </div>
+                </div>
+                <div class="menu-grupo">
+                  <span class="menu-titulo">Sincronía <span class="ayuda" id="sinc-valor">0 ms</span></span>
+                  <p class="ayuda">Si los acordes cambian antes o después de lo que oyes, córrelos aquí.</p>
+                  <div class="fila-sinc">
+                    <button type="button" class="boton pequeno" id="sinc-menos" title="Acordes 50 ms antes">− 50 ms</button>
+                    <input type="range" id="sinc" min="-500" max="500" step="10" value="0" aria-label="Ajuste de sincronía en milisegundos">
+                    <button type="button" class="boton pequeno" id="sinc-mas" title="Acordes 50 ms después">+ 50 ms</button>
+                  </div>
+                  <button type="button" class="enlace" id="sinc-cero">Volver a 0</button>
+                </div>
+                <div class="menu-grupo">
+                  <span class="menu-titulo">Ritmo detectado</span>
+                  <div class="fila-botones compacta">
+                    <button type="button" class="boton pequeno" id="tempo-doble" title="Si la casilla avanza a la mitad de velocidad que la canción">Tempo ×2</button>
+                    <button type="button" class="boton pequeno" id="tempo-mitad" title="Si la casilla avanza el doble de rápido que la canción">Tempo ×½</button>
+                    <button type="button" class="boton pequeno" id="compas-mover" title="Mover dónde empieza cada compás">Mover tiempo 1</button>
+                  </div>
+                </div>
+                <div class="menu-grupo menu-acciones">
+                  <button type="button" id="m-reanalizar">Volver a analizar…</button>
+                  <button type="button" id="m-marcar">Marcar cambios en vivo…</button>
+                  <button type="button" id="m-importar">Importar acordes de una imagen…</button>
+                  <button type="button" id="m-eliminar" class="texto-peligro">Eliminar canción</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edición -->
+          <div id="barra-edicion" class="barra-edicion" hidden>
+            <div class="edicion-fila">
+              <span class="edicion-etiqueta">Acordes</span>
+              <div id="paleta" class="paleta"></div>
+            </div>
+            <div class="edicion-fila">
+              <span class="edicion-etiqueta" id="seleccion-texto">Nada seleccionado</span>
+              <div class="grupo-acciones">
+                <button type="button" class="boton pequeno" id="e-izq" title="El cambio de acorde empieza un pulso antes">← Mover cambio</button>
+                <button type="button" class="boton pequeno" id="e-der" title="El cambio de acorde empieza un pulso después">Mover cambio →</button>
+              </div>
+              <div class="grupo-acciones">
+                <button type="button" class="boton pequeno" id="e-copiar" title="Copiar (Ctrl+C)">Copiar</button>
+                <button type="button" class="boton pequeno" id="e-pegar" title="Pegar (Ctrl+V)">Pegar</button>
+                <button type="button" class="boton pequeno" id="e-escuchar" title="Repetir la selección">Escuchar</button>
+              </div>
+              <div class="grupo-acciones">
+                <button type="button" class="boton pequeno" id="e-deshacer" title="Deshacer (Ctrl+Z)">Deshacer</button>
+                <button type="button" class="boton pequeno" id="e-rehacer" title="Rehacer (Ctrl+Y)">Rehacer</button>
+              </div>
+              <div class="grupo-acciones" title="Corrige el tono de TODOS los acordes guardados (por ejemplo si salieron con capo)">
+                <span class="ayuda">Corregir tono</span>
+                <button type="button" class="boton pequeno" id="e-tono-menos">−½</button>
+                <button type="button" class="boton pequeno" id="e-tono-mas">+½</button>
+              </div>
+              <span class="relleno"></span>
+              <button type="button" class="boton pequeno" id="e-descartar">Descartar</button>
+              <button type="button" class="boton boton-primario pequeno" id="e-guardar" disabled>Guardar</button>
+            </div>
+            <p class="ayuda ayuda-edicion">Toca un pulso (o arrastra para elegir varios) y luego un acorde de arriba.
+              Atajos: <kbd>1</kbd>–<kbd>9</kbd> acordes de la paleta, <kbd>Supr</kbd> borrar el acorde, <kbd>0</kbd> sin acorde, <kbd>←</kbd><kbd>→</kbd> mover la selección,
+              <kbd>Ctrl</kbd>+<kbd>Z</kbd> deshacer.</p>
+          </div>
+
+          <div id="aviso-bucle" class="aviso-en-linea" hidden></div>
+
+          <div class="tira-contenedor">
+            <div id="tira" class="tira" aria-label="Pulsos de la canción"></div>
+          </div>
+
+          <div class="vistas-barra">
+            <div class="segmentado" role="tablist" id="tabs-vista">
+              <button type="button" role="tab" data-vista="diagramas">Diagramas de acordes</button>
+              <button type="button" role="tab" data-vista="parrilla">Parrilla de acordes</button>
+            </div>
+            <div class="segmentado" role="tablist" id="tabs-modo">
+              <button type="button" role="tab" data-modo="animado">Animado</button>
+              <button type="button" role="tab" data-modo="resumen">Resumen</button>
+            </div>
+          </div>
+
+          <div id="panel-reanalizar" class="panel" hidden>
+            <h3 id="reanalizar-titulo">Volver a analizar el audio</h3>
+            <div id="nota-video" class="aviso-config" hidden>
+              <strong>Cómo funciona:</strong> al pulsar <em>Analizar</em>, el navegador pide permiso para compartir.
+              Elige <strong>esta pestaña</strong> y activa <strong>«Compartir también el audio de la pestaña»</strong>.
+              El video se reproduce completo desde el inicio (tarda lo mismo que la canción): no cambies de pestaña,
+              no silencies el video y no lo adelantes. Con YouTube Premium no hay anuncios que interrumpan.
+            </div>
+            <div class="campo-rango motor">
+              <span>Analizar con</span>
+              <label class="casilla"><input type="radio" name="motor" value="navegador" checked> Acordia (en el navegador)</label>
+              <label class="casilla"><input type="radio" name="motor" value="ia"> IA: BTC + Beat This!</label>
+              <span class="ayuda" id="ia-estado"></span>
+            </div>
+            <p id="nota-ia" class="ayuda" hidden>La IA reconoce más tipos de acorde (7, maj7, m7, sus, dim…) y encuentra los pulsos con una red neuronal.
+              No usa los acordes de referencia; el tempo que escribas solo sirve para corregir si sale al doble o a la mitad.</p>
+            <div id="selector-referencia-reanalizar"></div>
+            <div class="campo-rango">
+              <span>Tempo</span>
+              <input type="number" id="bpm-sugerido" min="40" max="240" step="0.1" placeholder="automático" aria-label="Tempo en BPM">
+              <button type="button" class="boton pequeno" id="b-tap" title="Toca al ritmo de la canción al menos 4 veces">Tocar al ritmo</button>
+              <label class="casilla" title="Los pulsos quedan perfectamente parejos a ese tempo. Úsalo si sabes el tempo real (por ejemplo, el que dice Chordify) y la canción es de estudio, grabada con metrónomo."><input type="checkbox" id="bpm-exacto"> Exacto</label>
+              <span class="ayuda" id="tap-texto">Opcional: si el analizador se equivoca de tempo.</span>
+            </div>
+            <label class="campo-rango">
+              <span>Cambios de acorde</span>
+              <span class="extremo">más seguidos</span>
+              <input type="range" id="estabilidad" min="0.6" max="0.94" step="0.02" value="0.82">
+              <span class="extremo">más estables</span>
+            </label>
+            <div class="fila-botones">
+              <button type="button" class="boton boton-primario" id="b-reanalizar-ir">Analizar</button>
+              <button type="button" class="boton" id="b-detener-captura" hidden>Detener y analizar lo que va</button>
+              <button type="button" class="boton" data-cerrar="panel-reanalizar">Cancelar</button>
+            </div>
+            <div id="progreso-re" class="progreso" hidden>
+              <div class="barra-progreso"><span id="progreso-re-relleno"></span></div>
+              <p id="progreso-re-texto"></p>
+            </div>
+          </div>
+
+          <div id="panel-marcar" class="panel" hidden>
+            <h3>Marcar los cambios de acorde en vivo</h3>
+            <p class="nota">Dale play y pulsa <kbd>Espacio</kbd> (o el botón grande) justo cuando cambie el acorde.
+              Cada toque asigna el siguiente acorde de la lista. Si te equivocas, usa Deshacer.</p>
+            <div id="marcar-sin-secuencia">
+              <textarea id="marcar-texto" rows="4" placeholder="Pega aquí los acordes en orden, por ejemplo:&#10;[Intro] G D&#10;[Verso] G D Em C"></textarea>
+              <div class="fila-botones">
+                <button type="button" class="boton" id="b-marcar-cargar">Usar estos acordes</button>
+                <button type="button" class="boton" id="b-marcar-base" hidden>Traer de la base de datos</button>
+              </div>
+            </div>
+            <div id="marcar-con-secuencia" hidden>
+              <div id="marcar-secuencia" class="secuencia"></div>
+              <div class="fila-botones">
+                <button type="button" class="boton boton-primario grande" id="b-marcar-tap">Cambio <kbd>Espacio</kbd></button>
+                <button type="button" class="boton" id="b-marcar-deshacer">Deshacer</button>
+                <button type="button" class="boton" id="b-marcar-reiniciar">Empezar de nuevo</button>
+                <button type="button" class="boton boton-primario" id="b-marcar-terminar">Terminar y guardar</button>
+              </div>
+            </div>
+            <div class="fila-botones"><button type="button" class="boton" data-cerrar="panel-marcar">Cerrar</button></div>
+          </div>
+
+          <div id="panel-importar" class="panel" hidden>
+            <h3>Importar acordes de una imagen o de texto</h3>
+            <p class="nota">Sube o pega (<kbd>Ctrl</kbd>+<kbd>V</kbd>) una captura de una parrilla de acordes, por ejemplo la de
+              Chordify. Cada casilla es un pulso. Acordia lee la imagen y te muestra el resultado abajo para que lo revises antes de ponerlo.
+              Si la canción no cabe en una captura, agrega varias en orden, sin repetir filas.</p>
+            <p class="nota" id="importar-aviso-tempo"></p>
+            <div class="fila-botones">
+              <label class="boton" for="importar-archivo">Elegir imagen…</label>
+              <input type="file" id="importar-archivo" accept="image/*" multiple hidden>
+              <span class="ayuda" id="importar-estado">O pega la captura con Ctrl+V.</span>
+            </div>
+            <div class="importar-cuerpo">
+              <textarea id="importar-texto" rows="7" spellcheck="false" placeholder="Mib . . . | Lab . . . | Sib . . . | Dom . . .&#10;(también puedes escribirlos tú)"></textarea>
+              <img id="importar-vista" alt="Imagen leída" hidden>
+            </div>
+            <p class="ayuda">Un elemento por pulso: el acorde donde cambia, un punto <code>.</code> si sigue el anterior y
+              <code>N</code> para silencio, <code>_</code> para las casillas grises antes o después de la canción. Las barras <code>|</code> separan compases (con ellas los compases y las filas quedan como en la imagen). <code>?</code> = no se pudo leer.</p>
+            <div class="campo-rango">
+              <span>Dónde</span>
+              <label class="casilla"><input type="radio" name="importar-donde" value="auto" checked> Donde mejor encaje con lo detectado</label>
+              <label class="casilla"><input type="radio" name="importar-donde" value="sel"> Desde el pulso seleccionado</label>
+            </div>
+            <div class="fila-botones">
+              <button type="button" class="boton boton-primario" id="b-importar-aplicar">Poner en la canción</button>
+              <button type="button" class="boton" id="b-importar-limpiar">Borrar texto</button>
+              <button type="button" class="boton" data-cerrar="panel-importar">Cerrar</button>
+            </div>
+          </div>
+
+          <div id="vista-diagramas" class="vista-diagramas"></div>
+          <div id="cuadricula" class="cuadricula" aria-label="Parrilla de acordes" hidden></div>
+        </article>
+      </div>
+
+      <aside class="columna-lateral">
+        <div class="tarjeta-lateral medio">
+          <div id="contenedor-youtube" class="youtube" hidden><div id="yt"></div></div>
+          <div id="ahora-suena" class="ahora-suena">
+            <div class="diagrama-caja actual"><span class="etiqueta">Ahora</span><div id="d-actual"></div></div>
+            <div class="diagrama-caja siguiente"><span class="etiqueta">Sigue</span><div id="d-siguiente"></div></div>
+          </div>
+          <p id="nota-capo" class="nota-capo" hidden></p>
+        </div>
+        <div class="tarjeta-lateral detalles">
+          <h2>Detalles de la canción</h2>
+          <dl id="detalles"></dl>
+        </div>
+        <div class="tarjeta-lateral practicar" id="tarjeta-practicar" hidden>
+          <h2>Para practicar</h2>
+          <div id="practicar"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<!-- Selector completo de acorde (edición) -->
+<div id="selector" class="selector" role="dialog" aria-label="Elegir acorde" hidden>
+  <div class="selector-cabeza"><strong>Otro acorde</strong><span id="selector-actual"></span></div>
+  <div class="selector-raices" id="selector-raices"></div>
+  <div class="selector-calidades" id="selector-calidades"></div>
+  <label class="campo pequeno">O escríbelo <input id="selector-texto" autocomplete="off" placeholder="Ej: Am7, F#m, Sol7, D/F#"></label>
+  <div class="selector-vista" id="selector-vista"></div>
+  <div class="fila-botones">
+    <button type="button" class="boton boton-primario" id="selector-aplicar">Aplicar</button>
+    <button type="button" class="boton" id="selector-cancelar">Cancelar</button>
+  </div>
+</div>
+
+<!-- Selección en eventos (YouTube) -->
+<div id="selector-evento" class="selector selector-evento" role="dialog" aria-label="Ajustar acorde" hidden>
+  <div class="selector-cabeza"><strong id="sev-titulo">Acorde</strong></div>
+  <div class="fila-botones compacta">
+    <button type="button" class="boton pequeno" id="sev-antes">Empieza 0,1 s antes</button>
+    <button type="button" class="boton pequeno" id="sev-despues">Empieza 0,1 s después</button>
+    <button type="button" class="boton pequeno" id="sev-aqui">Empieza aquí</button>
+    <button type="button" class="boton pequeno" id="sev-borrar">Borrar cambio</button>
+  </div>
+</div>
+
+<div id="conteo" class="conteo" hidden aria-live="assertive"></div>
+<div id="aviso" class="aviso" role="status" aria-live="polite" hidden></div>
+<audio id="audio" preload="auto"></audio>
+
+<script src="js/acordes.js"></script>
+<script src="js/importar-imagen.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Aquí puede ir el archivo de pesos de Beat This! (final0.ckpt, unos 80 MB) si no se descarga solo.
+
+1. Abre en el navegador: https://cloud.cp.jku.at/index.php/s/7ik4RrBKTS273gp
+2. Descarga final0.ckpt (solo ese; los demás son otras variantes del modelo).
+3. Guárdalo en esta carpeta con el nombre final0.ckpt.
+4. Cierra la ventana de Acordia IA y vuelve a abrir iniciar-ia.bat.
+
+Al analizar, la ventana debe decir "Beat This! listo" y "pulsos con Beat This!".
+Los pesos son de Foscarin, Schlüter y Widmer (JKU Linz), licencia MIT: https://github.com/CPJKU/beat_this

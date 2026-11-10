@@ -1,0 +1,48 @@
+digraph ER {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", pad=0.3, nodesep=0.6, label="Modelo de datos (MySQL)", labelloc=t, fontsize=18];
+  node [shape=plain, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9];
+  cancion [label=<<table border="1" cellborder="1" cellspacing="0" cellpadding="4" color="#555555">
+    <tr><td colspan="2" bgcolor="#b8781c"><font color="white"><b>cancion</b></font></td></tr>
+    <tr><td port="id" align="left"><b>PK</b> id</td><td align="left">BIGINT</td></tr>
+    <tr><td align="left">titulo</td><td align="left">VARCHAR(200)</td></tr>
+    <tr><td align="left">artista</td><td align="left">VARCHAR(200)</td></tr>
+    <tr><td align="left">fuente</td><td align="left">VARCHAR(10)</td></tr>
+    <tr><td align="left">nombre_archivo</td><td align="left">VARCHAR(100)</td></tr>
+    <tr><td align="left">youtube_id</td><td align="left">VARCHAR(20)</td></tr>
+    <tr><td align="left">spotify_id</td><td align="left">VARCHAR(22)</td></tr>
+    <tr><td align="left">duracion_seg, bpm</td><td align="left">DOUBLE</td></tr>
+    <tr><td align="left">tonalidad</td><td align="left">VARCHAR(10)</td></tr>
+    <tr><td align="left">capo, transposicion</td><td align="left">INT</td></tr>
+    <tr><td align="left">desfase</td><td align="left">DOUBLE</td></tr>
+    <tr><td align="left">primer_tiempo</td><td align="left">INT</td></tr>
+    <tr><td align="left">usar_para_aprender</td><td align="left">BIT</td></tr>
+    <tr><td align="left">pulsos</td><td align="left">LONGTEXT</td></tr>
+    <tr><td align="left">fecha_creacion, fecha_actualizacion</td><td align="left">DATETIME</td></tr></table>>];
+  evento [label=<<table border="1" cellborder="1" cellspacing="0" cellpadding="4" color="#555555">
+    <tr><td colspan="2" bgcolor="#b8781c"><font color="white"><b>evento_acorde</b></font></td></tr>
+    <tr><td align="left"><b>PK</b> id</td><td align="left">BIGINT</td></tr>
+    <tr><td port="fk" align="left"><b>FK</b> cancion_id</td><td align="left">BIGINT</td></tr>
+    <tr><td align="left">orden</td><td align="left">INT</td></tr>
+    <tr><td align="left">inicio, fin</td><td align="left">DOUBLE</td></tr>
+    <tr><td align="left">acorde</td><td align="left">VARCHAR(16)</td></tr>
+    <tr><td align="left">origen</td><td align="left">VARCHAR(12)</td></tr></table>>];
+  progresion [label=<<table border="1" cellborder="1" cellspacing="0" cellpadding="4" color="#555555">
+    <tr><td colspan="2" bgcolor="#2f7f72"><font color="white"><b>progresion_referencia</b></font></td></tr>
+    <tr><td align="left"><b>PK</b> id</td><td align="left">BIGINT</td></tr>
+    <tr><td port="sp" align="left">spotify_song_id <i>(índice)</i></td><td align="left">VARCHAR(22)</td></tr>
+    <tr><td align="left">spotify_artist_id</td><td align="left">VARCHAR(22)</td></tr>
+    <tr><td align="left">acordes</td><td align="left">MEDIUMTEXT</td></tr>
+    <tr><td align="left">genero_principal</td><td align="left">VARCHAR(40)</td></tr>
+    <tr><td align="left">fecha_lanzamiento</td><td align="left">VARCHAR(10)</td></tr></table>>];
+  transicion [label=<<table border="1" cellborder="1" cellspacing="0" cellpadding="4" color="#555555">
+    <tr><td colspan="2" bgcolor="#2f7f72"><font color="white"><b>transicion_acorde</b></font></td></tr>
+    <tr><td align="left"><b>PK</b> id</td><td align="left">BIGINT</td></tr>
+    <tr><td align="left">calidad_desde <i>(UK)</i></td><td align="left">VARCHAR(3)</td></tr>
+    <tr><td align="left">calidad_hacia <i>(UK)</i></td><td align="left">VARCHAR(3)</td></tr>
+    <tr><td align="left">intervalo <i>(UK)</i></td><td align="left">INT</td></tr>
+    <tr><td align="left">conteo</td><td align="left">BIGINT</td></tr></table>>];
+  cancion:id -> evento:fk [arrowhead=crowodot, arrowtail=teetee, dir=both, label="  1 : N  (ON DELETE CASCADE)"];
+  cancion -> progresion:sp [style=dashed, arrowhead=none, label=" spotify_id ≈ spotify_song_id\n(relación lógica, opcional)"];
+  {rank=same; progresion; transicion;}
+}

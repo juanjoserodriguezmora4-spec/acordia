@@ -1,0 +1,9 @@
+Tesseract.js 5.1.1 (reconocimiento de texto, OCR) incluido para que "Importar acordes de una imagen"
+funcione sin internet.
+
+- tesseract.min.js, worker.min.js ............ https://github.com/naptha/tesseract.js (Apache 2.0)
+- tesseract-core-*-lstm.wasm.js .............. https://github.com/naptha/tesseract.js-core (Apache 2.0)
+- lang/eng.traineddata.gz .................... modelo de inglés "best_int" de tessdata (Apache 2.0)
+                                               https://github.com/tesseract-ocr/tessdata_best
+
+Solo se usa el modelo de inglés con una lista de letras permitidas (las de los nombres de acordes).

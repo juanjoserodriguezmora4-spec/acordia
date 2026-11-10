@@ -1,0 +1,107 @@
+digraph Clases {
+  graph [rankdir=TB, fontname="Helvetica", bgcolor="white", pad=0.3, nodesep=0.5, ranksep=0.7, label="Diagrama de clases — backend (Spring Boot)", labelloc=t, fontsize=18];
+  node [shape=plain, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9, color="#444444"];
+
+  CancionController [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#eef5f4" color="#2f7f72">
+    <tr><td bgcolor="#2f7f72"><font color="white"><i>«RestController»</i><br/><b>CancionController</b></font></td></tr>
+    <tr><td align="left">+ listar(): List&lt;CancionResumen&gt;<br align="left"/>+ obtener(id): CancionDetalle<br align="left"/>+ subir(archivo, titulo, artista, spotifyId)<br align="left"/>+ crearYoutube(NuevaCancionYoutube)<br align="left"/>+ actualizar(id, ActualizarCancion)<br align="left"/>+ guardarAcordes(id, GuardarAcordes)<br align="left"/>+ audio(id): Resource<br align="left"/>+ eliminar(id)<br align="left"/></td></tr></table>>];
+
+  ReferenciaController [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#eef5f4" color="#2f7f72">
+    <tr><td bgcolor="#2f7f72"><font color="white"><i>«RestController»</i><br/><b>ReferenciaController</b></font></td></tr>
+    <tr><td align="left">+ estado(): Estado<br align="left"/>+ buscar(q): List&lt;ResultadoSpotify&gt;<br align="left"/>+ porSpotifyId(id): Referencia<br align="left"/>+ convertir(texto): Referencia<br align="left"/>+ transiciones(): ModeloTransiciones<br align="left"/></td></tr></table>>];
+
+  IaController [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#eef5f4" color="#2f7f72">
+    <tr><td bgcolor="#2f7f72"><font color="white"><i>«RestController»</i><br/><b>IaController</b></font></td></tr>
+    <tr><td align="left">+ estado(): EstadoIa<br align="left"/>+ analizarCancion(id, bpm, estabilidad): JsonNode<br align="left"/>+ analizarAudio(archivo, bpm, estabilidad): JsonNode<br align="left"/></td></tr></table>>];
+
+  AnalisisIaService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#fdf3e3" color="#b8781c">
+    <tr><td bgcolor="#b8781c"><font color="white"><i>«Service»</i><br/><b>AnalisisIaService</b></font></td></tr>
+    <tr><td align="left">- base: URI (acordia.ia.url)<br align="left"/>- http: HttpClient<br align="left"/></td></tr>
+    <tr><td align="left">+ estado(): EstadoIa<br align="left"/>+ analizarCancion(id, bpm, estabilidad): JsonNode<br align="left"/>+ analizarAudio(datos, nombre, bpm, estabilidad): JsonNode<br align="left"/>~ armarFormulario(...): byte[]<br align="left"/></td></tr></table>>];
+
+  CancionService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#fdf3e3" color="#b8781c">
+    <tr><td bgcolor="#b8781c"><font color="white"><i>«Service»</i><br/><b>CancionService</b></font></td></tr>
+    <tr><td align="left">+ listar() / obtener(id)<br align="left"/>+ crearDesdeArchivo(...)<br align="left"/>+ crearDesdeYoutube(...)<br align="left"/>+ guardarAcordes(id, datos)<br align="left"/>+ eliminar(id)<br align="left"/>~ extraerIdYoutube(url): String<br align="left"/></td></tr></table>>];
+
+  AlmacenamientoAudioService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#fdf3e3" color="#b8781c">
+    <tr><td bgcolor="#b8781c"><font color="white"><i>«Service»</i><br/><b>AlmacenamientoAudioService</b></font></td></tr>
+    <tr><td align="left">- carpeta: Path<br align="left"/></td></tr>
+    <tr><td align="left">+ guardar(MultipartFile): String<br align="left"/>+ cargar(nombre): Resource<br align="left"/>+ borrar(nombre)<br align="left"/></td></tr></table>>];
+
+  SpotifyService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#fdf3e3" color="#b8781c">
+    <tr><td bgcolor="#b8781c"><font color="white"><i>«Service»</i><br/><b>SpotifyService</b></font></td></tr>
+    <tr><td align="left">- clientId, clientSecret: String<br align="left"/>- token: String<br align="left"/></td></tr>
+    <tr><td align="left">+ estaConfigurado(): boolean<br align="left"/>+ buscar(consulta): List&lt;ResultadoSpotify&gt;<br align="left"/>- obtenerToken(): String<br align="left"/></td></tr></table>>];
+
+  ReferenciaService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#fdf3e3" color="#b8781c">
+    <tr><td bgcolor="#b8781c"><font color="white"><i>«Service»</i><br/><b>ReferenciaService</b></font></td></tr>
+    <tr><td align="left">+ porSpotifyId(id): Optional&lt;Referencia&gt;<br align="left"/>+ convertir(...): Referencia<br align="left"/></td></tr></table>>];
+
+  ModeloTransicionesService [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#fdf3e3" color="#b8781c">
+    <tr><td bgcolor="#b8781c"><font color="white"><i>«Service»</i><br/><b>ModeloTransicionesService</b></font></td></tr>
+    <tr><td align="left">- cache: ModeloTransiciones<br align="left"/></td></tr>
+    <tr><td align="left">+ obtener(): ModeloTransiciones<br align="left"/>+ invalidar()<br align="left"/>+ cancionesAprendidas(): long<br align="left"/>- construir(): base + canciones revisadas<br align="left"/></td></tr></table>>];
+
+  Importador [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#fdf3e3" color="#b8781c">
+    <tr><td bgcolor="#b8781c"><font color="white"><i>«Component» CommandLineRunner</i><br/><b>ImportadorChordonomicon</b></font></td></tr>
+    <tr><td align="left">+ run(args)<br align="left"/>+ importar(ruta: Path)<br align="left"/></td></tr></table>>];
+
+  NotacionAcordes [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#f3f3f3" color="#777777">
+    <tr><td bgcolor="#777777"><font color="white"><i>«utilidad»</i><br/><b>NotacionAcordes</b></font></td></tr>
+    <tr><td align="left">+ leer(texto): AcordeLeido<br align="left"/>+ simplificar(texto): String<br align="left"/></td></tr></table>>];
+
+  MatrizTransiciones [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#f3f3f3" color="#777777">
+    <tr><td bgcolor="#777777"><font color="white"><i>«utilidad»</i><br/><b>MatrizTransiciones</b></font></td></tr>
+    <tr><td align="left">+ contar(acordes, conteos)<br align="left"/>+ aMatriz(conteos): double[][]<br align="left"/>+ conteosTeoricos()<br align="left"/>+ mezclar(base, propia, peso)<br align="left"/>+ pesoPropio(canciones)<br align="left"/></td></tr></table>>];
+
+  Cancion [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#ffffff" color="#333333">
+    <tr><td bgcolor="#333333"><font color="white"><i>«Entity»</i><br/><b>Cancion</b></font></td></tr>
+    <tr><td align="left">- id: Long<br align="left"/>- titulo, artista: String<br align="left"/>- fuente: FuenteAudio<br align="left"/>- nombreArchivo, youtubeId, spotifyId: String<br align="left"/>- duracionSeg, bpm: Double<br align="left"/>- tonalidad: String<br align="left"/>- capo, transposicion: int<br align="left"/>- desfase: Double (sincronía)<br align="left"/>- primerTiempo: Integer<br align="left"/>- usarParaAprender: Boolean<br align="left"/>- pulsos: String (JSON)<br align="left"/>- fechaCreacion, fechaActualizacion<br align="left"/></td></tr>
+    <tr><td align="left">+ reemplazarEventos(List&lt;EventoAcorde&gt;)<br align="left"/></td></tr></table>>];
+
+  EventoAcorde [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#ffffff" color="#333333">
+    <tr><td bgcolor="#333333"><font color="white"><i>«Entity»</i><br/><b>EventoAcorde</b></font></td></tr>
+    <tr><td align="left">- id: Long<br align="left"/>- orden: int<br align="left"/>- inicio, fin: double<br align="left"/>- acorde: String<br align="left"/>- origen: OrigenAcorde<br align="left"/></td></tr></table>>];
+
+  ProgresionReferencia [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#ffffff" color="#333333">
+    <tr><td bgcolor="#333333"><font color="white"><i>«Entity»</i><br/><b>ProgresionReferencia</b></font></td></tr>
+    <tr><td align="left">- id: Long<br align="left"/>- spotifySongId: String<br align="left"/>- acordes: String<br align="left"/>- generoPrincipal: String<br align="left"/></td></tr></table>>];
+
+  TransicionAcorde [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#ffffff" color="#333333">
+    <tr><td bgcolor="#333333"><font color="white"><i>«Entity»</i><br/><b>TransicionAcorde</b></font></td></tr>
+    <tr><td align="left">- calidadDesde, calidadHacia: String<br align="left"/>- intervalo: int<br align="left"/>- conteo: long<br align="left"/></td></tr></table>>];
+
+  FuenteAudio [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#ffffff" color="#333333">
+    <tr><td><i>«enum»</i><br/><b>FuenteAudio</b></td></tr><tr><td align="left">MP3<br align="left"/>YOUTUBE<br align="left"/></td></tr></table>>];
+  OrigenAcorde [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#ffffff" color="#333333">
+    <tr><td><i>«enum»</i><br/><b>OrigenAcorde</b></td></tr><tr><td align="left">DETECTADO<br align="left"/>BASE_DATOS<br align="left"/>MANUAL<br align="left"/></td></tr></table>>];
+
+  {rank=same; CancionController; ReferenciaController; IaController;}
+  {rank=same; CancionService; AlmacenamientoAudioService; SpotifyService; ReferenciaService; ModeloTransicionesService; Importador; AnalisisIaService;}
+  {rank=same; Cancion; ProgresionReferencia; TransicionAcorde; NotacionAcordes; MatrizTransiciones;}
+
+  CancionController -> CancionService [arrowhead=vee, style=dashed, label="usa"];
+  IaController -> AnalisisIaService [arrowhead=vee, style=dashed];
+  AnalisisIaService -> CancionService [arrowhead=vee, style=dashed];
+  AnalisisIaService -> AlmacenamientoAudioService [arrowhead=vee, style=dashed, label="lee el MP3"];
+  CancionController -> AlmacenamientoAudioService [arrowhead=vee, style=dashed];
+  CancionService -> AlmacenamientoAudioService [arrowhead=vee, style=dashed];
+  ReferenciaController -> SpotifyService [arrowhead=vee, style=dashed];
+  ReferenciaController -> ReferenciaService [arrowhead=vee, style=dashed];
+  ReferenciaController -> ModeloTransicionesService [arrowhead=vee, style=dashed];
+  ReferenciaController -> CancionService [arrowhead=vee, style=dashed];
+  Importador -> ModeloTransicionesService [arrowhead=vee, style=dashed];
+  CancionService -> ModeloTransicionesService [arrowhead=vee, style=dashed, label="avisa cambios"];
+  CancionService -> Cancion [arrowhead=vee, style=dashed, label="CancionRepositorio"];
+  ReferenciaService -> ProgresionReferencia [arrowhead=vee, style=dashed, label="ProgresionReferencia-\nRepositorio"];
+  SpotifyService -> ProgresionReferencia [arrowhead=vee, style=dashed];
+  ModeloTransicionesService -> TransicionAcorde [arrowhead=vee, style=dashed, label="TransicionAcorde-\nRepositorio"];
+  ModeloTransicionesService -> MatrizTransiciones [arrowhead=vee, style=dashed];
+  Importador -> MatrizTransiciones [arrowhead=vee, style=dashed];
+  ReferenciaService -> NotacionAcordes [arrowhead=vee, style=dashed];
+  MatrizTransiciones -> NotacionAcordes [arrowhead=vee, style=dashed];
+  Cancion -> EventoAcorde [dir=both, arrowtail=diamond, arrowhead=vee, taillabel="1", headlabel="0..*", label=" eventos"];
+  Cancion -> FuenteAudio [arrowhead=vee];
+  EventoAcorde -> OrigenAcorde [arrowhead=vee];
+}

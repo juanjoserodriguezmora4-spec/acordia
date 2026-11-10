@@ -1,0 +1,39 @@
+digraph CasosDeUso {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", pad=0.3, nodesep=0.22, ranksep=1.0, label="Diagrama de casos de uso — Acordia", labelloc=t, fontsize=18, splines=true];
+  node [fontname="Helvetica", fontsize=11];
+  edge [fontname="Helvetica", fontsize=9, color="#555555", arrowhead=none];
+
+  usuario [label="Guitarrista\n(usuario)", shape=none, image="actor.png", labelloc=b, height=1.6, width=1.0, fixedsize=true, imagescale=true];
+  admin   [label="Administrador", shape=none, image="actor.png", labelloc=b, height=1.6, width=1.2, fixedsize=true, imagescale=true];
+  spotify [label="«sistema externo»\nSpotify Web API", shape=box, style="rounded", color="#777777"];
+  youtube [label="«sistema externo»\nYouTube", shape=box, style="rounded", color="#777777"];
+
+  subgraph cluster_sistema {
+    label="Acordia"; fontsize=14; style="rounded"; color="#b8781c"; penwidth=1.6;
+    node [shape=ellipse, style=filled, fillcolor="#fdf3e3", color="#b8781c", width=2.6];
+    cu1  [label="CU1 Subir canción\n(archivo de audio)"];
+    cu2  [label="CU2 Crear canción\ndesde YouTube"];
+    cu6  [label="CU6 Reproducir con\nacordes sincronizados"];
+    cu7  [label="CU7 Transponer,\ncapo y notación"];
+    cu8  [label="CU8 Repetir parte\ny cambiar velocidad"];
+    cu9  [label="CU9 Editar acordes"];
+    cu11 [label="CU11 Gestionar\nbiblioteca"];
+    cu12 [label="CU12 Importar\nChordonomicon"];
+    cu3  [label="CU3 Analizar audio\n(pulsos y acordes)"];
+    cu4  [label="CU4 Buscar acordes\nen la base de datos"];
+    cu5  [label="CU5 Pegar acordes\nde un cancionero"];
+    cu10 [label="CU10 Marcar cambios\nen vivo"];
+  }
+
+  usuario -> {cu1 cu2 cu6 cu7 cu8 cu9 cu11};
+  admin -> cu12;
+  cu1 -> cu3  [style=dashed, arrowhead=vee, label="«include»"];
+  cu1 -> cu4  [style=dashed, dir=back, arrowtail=vee, label="«extend»"];
+  cu1 -> cu5  [style=dashed, dir=back, arrowtail=vee, label="«extend»"];
+  cu2 -> cu4  [style=dashed, dir=back, arrowtail=vee, label="«extend»"];
+  cu2 -> cu5  [style=dashed, dir=back, arrowtail=vee, label="«extend»"];
+  cu2 -> cu10 [style=dashed, arrowhead=vee, label="«include»"];
+  cu4 -> spotify;
+  cu10 -> youtube;
+  cu12 -> cu3 [style=invis];
+}

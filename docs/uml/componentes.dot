@@ -1,0 +1,46 @@
+digraph Componentes {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", pad=0.3, nodesep=0.35, ranksep=0.8, compound=true, label="Diagrama de componentes y despliegue", labelloc=t, fontsize=18];
+  node [shape=component, fontname="Helvetica", fontsize=10, style=filled, fillcolor="#ffffff"];
+  edge [fontname="Helvetica", fontsize=9, color="#444444"];
+
+  subgraph cluster_navegador {
+    label="Computador del usuario: navegador web"; style="rounded,filled"; fillcolor="#eef5f4"; color="#2f7f72";
+    pagina [label="index.html + estilos.css"];
+    app [label="app.js\n(vistas, reproductor, edición,\nmarcado, para practicar, nivel Sencillo)"];
+    acordes [label="acordes.js\n(teoría y diagramas SVG)"];
+    worker [label="Web Worker\nanalizador.js\n(FFT, croma, pulsos, Viterbi)"];
+    webaudio [label="Web Audio API\n(decodificar y pasar a 11 kHz)", shape=box];
+    importar [label="importar-imagen.js\n(casillas, ♭/♯, texto por pulsos)"];
+    ocr [label="Tesseract.js (OCR)\nvendor/tesseract", shape=component];
+    pagina -> app; app -> acordes; app -> worker [label="muestras de audio"]; app -> webaudio;
+    app -> importar [label="captura"]; importar -> ocr [label="recortes"];
+  }
+  subgraph cluster_servidor {
+    label="Servidor: Spring Boot (Java 17) en el puerto 8080"; style="rounded,filled"; fillcolor="#fdf3e3"; color="#b8781c";
+    controladores [label="Controladores REST\nCancionController\nReferenciaController\nIaController"];
+    servicios [label="Servicios\n(canciones, Spotify, referencias,\nmodelo de transiciones, AnalisisIaService)"];
+    importador [label="ImportadorChordonomicon"];
+    repos [label="Repositorios\nSpring Data JPA"];
+    archivos [label="Carpeta ./audios", shape=folder];
+    controladores -> servicios -> repos; servicios -> archivos; importador -> repos;
+  }
+  subgraph cluster_ia {
+    label="Servicio de IA opcional: Python en el puerto 5000 (carpeta ia/)"; style="rounded,filled,dashed"; fillcolor="#f1eef9"; color="#6a55b0";
+    fastapi [label="servidor.py (FastAPI)\nGET /estado · POST /analizar"];
+    motor [label="motor.py\n(CQT, promedio por pulso, Viterbi)"];
+    btc [label="BTC (PyTorch)\nacordes, 170 clases", shape=box3d];
+    beatthis [label="Beat This! (PyTorch)\npulsos y tiempos 1", shape=box3d];
+    fastapi -> motor; motor -> btc; motor -> beatthis;
+  }
+  mysql [label="MySQL 8\nbase «acordia»", shape=cylinder, fillcolor="#f3f3f3"];
+  spotify [label="Spotify Web API\n(búsqueda por nombre)", shape=box, style="rounded,dashed"];
+  youtube [label="YouTube\nIFrame Player API", shape=box, style="rounded,dashed"];
+  csv [label="chordonomicon.csv\n(~680.000 canciones)", shape=note];
+
+  app -> controladores [label="HTTP / JSON", lhead=cluster_servidor];
+  repos -> mysql [label="JDBC"];
+  servicios -> spotify [label="HTTPS\nClient Credentials"];
+  app -> youtube [label="iframe"];
+  csv -> importador [label="lectura única"];
+  servicios -> fastapi [label="HTTP multipart\n(audio)", lhead=cluster_ia];
+}

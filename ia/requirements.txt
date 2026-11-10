@@ -1,0 +1,13 @@
+# Acordia IA - paquetes de Python (probados con Python 3.12 y 3.13).
+# En Windows, PyTorch de PyPI ya es la versión sin tarjeta gráfica (CPU), que es la que se necesita.
+torch==2.15.0
+torchaudio==2.11.1
+librosa==1.0.0
+soundfile==0.14.0
+soxr==1.1.0
+einops==0.8.2
+rotary-embedding-torch==0.9.1
+beat-this==1.1.0
+fastapi==0.162.0
+uvicorn==0.54.0
+python-multipart==0.0.33
