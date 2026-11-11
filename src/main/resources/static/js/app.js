@@ -2727,6 +2727,13 @@
         if (/^[1-9]$/.test(e.key) && rep.paleta && rep.paleta[Number(e.key) - 1]) { aplicarAcorde(rep.paleta[Number(e.key) - 1]); return; }
         if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); borrarCambio(); return; }
         if (e.key === '0') { aplicarAcorde('N'); return; }
+        // Ctrl + ← / →: mover el cambio de acorde un pulso (lo mismo que los botones "Mover cambio")
+        if (ctrl && !e.shiftKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+          e.preventDefault();
+          moverCambio(e.key === 'ArrowLeft' ? -1 : 1);
+          const el = rep.sel && rep.celdasTira[rep.sel.a]; if (el) seguirEnTira(el, true);
+          return;
+        }
         if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && rep.sel) {
           e.preventDefault();
           const d = e.key === 'ArrowLeft' ? -1 : 1;
